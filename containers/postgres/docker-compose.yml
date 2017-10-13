@@ -1,8 +1,7 @@
 version: "3"
 services:
   db:
-    image: postgres
-    restart: always
+    image: mdillon/postgis:9.6-alpine
     environment: 
       POSTGRES_PASSWORD: abcde
       POSTGRES_USER: jay
@@ -10,9 +9,8 @@ services:
     volumes: 
       - "/media/fast/postgres:/var/lib/postgresql/data"
     ports:
-        - "5432:5432"
-#  admin:
-#      image: jlaura/pgadmin4
-#      restart: always
-#      ports:
-#          - "5050:5050"
+        - "8001:5432"
+  admin:
+      image: jlaura/pgadmin4:0.2
+      ports:
+      - "5050:5050"

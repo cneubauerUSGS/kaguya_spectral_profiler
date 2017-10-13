@@ -33,8 +33,10 @@ RUN pip install https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v1.6/pip/pgadmin
 # PGAdmin port
 EXPOSE 5050
 
-RUN export PGADMIN_SETUP_EMAIL="admin@admin.org"
-RUN export PGADMIN_SETUP_PASSWORD="admin"
-RUN python /opt/conda/lib/python3.6/site-packages/pgadmin4/setup.py
+# Set the server parameter to be false
+RUN sed -i 's/SERVER_MODE = True/SERVER_MODE = False/g' /opt/conda/lib/python3.6/site-packages/pgadmin4/config.py
+RUN sed -i "s/DEFAULT_SERVER = '127.0.0.1'/DEFAULT_SERVER = '0.0.0.0'/g" /opt/conda/lib/python3.6/site-packages/pgadmin4/config.py 
 
-CMD ["python", "pgAdmin4.py"]
+RUN python /opt/conda/lib/python3.6/site-packages/pgadmin4/config.py
+
+CMD ["python", "/opt/conda/lib/python3.6/site-packages/pgadmin4/pgAdmin4.py"]
