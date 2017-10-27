@@ -5,11 +5,15 @@ services:
     image: jlaura/spark
     command: start-spark master
     hostname: master
+    networks:
+      - snet
+      - vnet
     ports:
       - "6066:6066"
       - "7070:7070"
       - "8080:8080"
       - "50070:50070"
+  
   worker:
     image: jlaura/spark
     command: start-spark worker master
@@ -18,18 +22,29 @@ services:
       SPARK_WORKER_MEMORY: 2g
     links:
       - master
+    networks:
+      - snet
+      - vnet
+
   jupyter:
     image: jlaura/jupyter-spark
-    environment:
-      NB_USER: 'jlaura'
     links:
       - master
     expose:
       - 8888
     ports:
       - 8888
+    networks:
+      - snet
+      - vnet
+
+# Connect to both the Spark internal net and then connect the master / jupyter
+# to the hbase service stack as well.  This keeps these two services completely
+# independent from one another.
 
 networks:
-  default:
+  snet:
+    driver: bridge
+  vnet:
     external:
       name: vnet
