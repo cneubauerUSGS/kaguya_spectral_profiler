@@ -35,4 +35,5 @@ ENV PYTHONPATH $SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.4-src.zip
 ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
 
 COPY hbase-site.xml ${SPARK_HOME}/conf/hbase-site.xml
-COPY Spark_HBase.ipynb /home/jovyan/Spark_HBASE.ipynb
+COPY Spark_HBase.ipynb /home/jovyan/Spark_HBase.ipynb
+RUN chown jovyan:users /home/jovyan/Spark_HBase.ipynb
