@@ -2,6 +2,7 @@ FROM singularities/hadoop:2.7
 
 # Version
 ENV SPARK_VERSION=2.2.0
+ENV HBASE_VERSION=1.2.6
 
 # Set home
 ENV SPARK_HOME=/usr/local/spark-$SPARK_VERSION
@@ -46,6 +47,16 @@ ENV PATH=$PATH:/opt/util/bin/
 # Fix environment for other users
 RUN echo "export SPARK_HOME=$SPARK_HOME" >> /etc/bash.bashrc \
   && echo 'export PATH=$PATH:$SPARK_HOME/bin'>> /etc/bash.bashrc
+
+# Copy the HBase plugin
+COPY shc-core-1.1.2-2.2-s_2.11.jar $SPARK_HOME/jars/shc-core-1.1.2-2.2-s_2.11.jar
+
+# Install the HBase jars
+# Download and inject the HBase jars as well                                    
+RUN wget http://apache.claz.org/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz && \
+    tar xzf hbase-${HBASE_VERSION}-bin.tar.gz -C /usr/local && \                
+    rm hbase-${HBASE_VERSION}-bin.tar.gz 
+ENV HBASE_HOME = /usr/local/hbase-${HBASE_VERSION}
 
 # Add deprecated commands
 #RUN echo '#!/usr/bin/env bash' > /usr/bin/master \
