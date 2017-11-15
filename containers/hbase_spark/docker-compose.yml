@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  master:
+    image: jlaura/spark:latest
+    command: start-spark master
+    hostname: master
+    networks:
+      - vnet
+    ports:
+      - "6066:6066"
+      - "7070:7070"
+      - "8080:8080"
+      - "50070:50070"
+  
+  worker:
+    image: jlaura/spark:latest
+    command: start-spark worker master
+    environment:
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 2g
+    links:
+      - master
+    networks:
+      - vnet
+
+# TODO: Jupyter is finding spark in /usr/local/spark, but should probably just
+# be mounting a volume from the spark master...
+  jupyter:
+    image: jlaura/jupyter-spark
+    links:
+      - master
+    expose:
+      - 8888
+    ports:
+      - 8888
+    networks:
+      - vnet
+
+# Connect to both the Spark internal net and then connect the master / jupyter
+# to the hbase service stack as well.  This keeps these two services completely
+# independent from one another.
+
+networks:
+  vnet:
+    external:
+      name: vnet
